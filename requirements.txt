@@ -1,0 +1,7 @@
+Django>=5.2,<6.0
+djangorestframework>=3.15
+Pillow>=11.0
+# PostgreSQL ishlatilsa:
+# psycopg[binary]>=3.2
+# Production uchun:
+# gunicorn>=23.0
