@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load salon_tags %}
+
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero__inner">
+    <div class="hero__text">
+      <p class="eyebrow">Rasmiy diler · Toshkent</p>
+      <h1 class="hero__title">Elektr kelajakka<br><span>bugun o'tiring</span></h1>
+      <p class="hero__lead">{{ salon.slogan }}. Blade batareya, 8 yil kafolat va bepul test-drayv — barchasi bir joyda.</p>
+      <div class="hero__actions">
+        <a href="{% url 'cars:list' %}" class="btn btn--primary">Modellarni ko'rish</a>
+        <a href="{% url 'leads:test_drive' %}" class="btn btn--outline-light">Test-drayvga yozilish</a>
+      </div>
+      <dl class="hero__stats">
+        <div><dt>8 yil</dt><dd>batareyaga kafolat</dd></div>
+        <div><dt>1100 km</dt><dd>gacha zapas yurish</dd></div>
+        <div><dt>3.8 s</dt><dd>0–100 km/soat</dd></div>
+      </dl>
+    </div>
+    {% if hero_car %}
+      <a href="{{ hero_car.get_absolute_url }}" class="hero__car" style="--car: {{ hero_car.accent_color }}">
+        <div class="hero__glow"></div>
+        {% include "partials/car_visual.html" with car=hero_car size="hero" %}
+        <div class="hero__car-meta">
+          <strong>{{ hero_car.name }}</strong>
+          <span>${{ hero_car.price|spaced }} dan</span>
+        </div>
+      </a>
+    {% endif %}
+  </div>
+</section>
+
+{% if body_types %}
+<section class="section section--tight">
+  <div class="container">
+    <div class="chips chips--center">
+      {% for bt in body_types %}
+        <a href="{% url 'cars:list' %}?body={{ bt.slug }}" class="chip">{{ bt.name }}</a>
+      {% endfor %}
+      <a href="{% url 'cars:list' %}?powertrain=ev" class="chip chip--accent">⚡ Faqat elektr</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">Model qatori</p>
+        <h2>Ommabop modellar</h2>
+      </div>
+      <a href="{% url 'cars:list' %}" class="link-arrow">Barcha modellar →</a>
+    </div>
+    <div class="grid grid--cards">
+      {% for car in featured %}
+        {% include "partials/car_card.html" %}
+      {% empty %}
+        <p class="empty">Katalog hozircha bo'sh. <code>python manage.py seed_cars</code> buyrug'i bilan demo ma'lumot qo'shing.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section--dark">
+  <div class="container">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">Nega BYD?</p>
+        <h2>Texnologiya, ishonch va tejamkorlik</h2>
+      </div>
+    </div>
+    <div class="features">
+      <article class="feature">
+        <div class="feature__icon">🔋</div>
+        <h3>Blade batareya</h3>
+        <p>Mixlash sinovidan o'tgan LFP batareya — yonmaydi, portlamaydi va 1 mln km dan ortiq xizmat qiladi.</p>
+      </article>
+      <article class="feature">
+        <div class="feature__icon">⛽</div>
+        <h3>Kamida 3× tejamkor</h3>
+        <p>100 km yo'l elektrda o'rtacha 10–15 ming so'm turadi. Gibrid DM-i modellari — ~3.8 l/100 km.</p>
+      </article>
+      <article class="feature">
+        <div class="feature__icon">🛡️</div>
+        <h3>Rasmiy kafolat</h3>
+        <p>Avtomobilga 6 yil, batareya va elektr motorga 8 yil yoki 150 000 km kafolat.</p>
+      </article>
+      <article class="feature">
+        <div class="feature__icon">🔧</div>
+        <h3>Servis markazi</h3>
+        <p>Sertifikatlangan mutaxassislar, original ehtiyot qismlar va tez quvvatlash stansiyasi.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <p class="eyebrow">Moliyalashtirish</p>
+      <h2>Kredit, bo'lib to'lash va trade-in</h2>
+      <p class="muted">Hamkor banklar orqali {{ salon.credit_rate|floatformat:0 }}% dan boshlanuvchi kredit, 0% boshlang'ich to'lov imkoniyati va eski avtomobilingizni yangi BYD ga almashtirish.</p>
+      <ul class="checklist">
+        <li>Ariza 30 daqiqada ko'rib chiqiladi</li>
+        <li>Muddat — 60 oygacha</li>
+        <li>Eski avtomobil bozor narxida baholanadi</li>
+      </ul>
+      <div class="hero__actions">
+        <a href="{% url 'leads:contacts' %}?topic=credit" class="btn btn--primary">Kredit arizasi</a>
+        <a href="{% url 'leads:contacts' %}?topic=trade_in" class="btn btn--ghost">Trade-in</a>
+      </div>
+    </div>
+    <div class="panel" id="test-drive">
+      <h3>Bepul test-drayv</h3>
+      <p class="muted">Qulay kun va vaqtni tanlang — menejer siz bilan bog'lanadi.</p>
+      {% include "partials/test_drive_form.html" with form=test_drive_form next=request.path %}
+    </div>
+  </div>
+</section>
+{% endblock %}

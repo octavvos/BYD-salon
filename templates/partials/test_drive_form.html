@@ -1,0 +1,23 @@
+{% comment %}Parametrlar: form, next (muvaffaqiyatdan keyin qaytish manzili), hide_car{% endcomment %}
+<form method="post" action="{% url 'leads:test_drive' %}" class="form" novalidate>
+  {% csrf_token %}
+  {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+  {{ form.website }}
+  {% for error in form.non_field_errors %}<p class="form__error">{{ error }}</p>{% endfor %}
+  {% if hide_car %}
+    <input type="hidden" name="car" value="{{ form.car.value|default_if_none:'' }}">
+  {% else %}
+    {% include "partials/field.html" with field=form.car %}
+  {% endif %}
+  <div class="form__row">
+    {% include "partials/field.html" with field=form.full_name %}
+    {% include "partials/field.html" with field=form.phone %}
+  </div>
+  <div class="form__row">
+    {% include "partials/field.html" with field=form.preferred_date %}
+    {% include "partials/field.html" with field=form.time_slot %}
+  </div>
+  {% include "partials/field.html" with field=form.comment %}
+  <button type="submit" class="btn btn--primary btn--block">Test-drayvga yozilish</button>
+  <p class="form__hint">Tugmani bosish orqali shaxsiy ma'lumotlarni qayta ishlashga rozilik bildirasiz.</p>
+</form>

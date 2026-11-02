@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Biz haqimizda — {{ salon.name }}{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <p class="eyebrow">Biz haqimizda</p>
+    <h1>{{ salon.name }}</h1>
+    <p class="muted">{{ salon.slogan }}</p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container split">
+    <div class="prose">
+      <p>Biz — BYD avtomobillarining rasmiy dileri. Salonimizda elektromobillar va DM-i gibridlarining to'liq model qatori, sertifikatlangan servis markazi va tez quvvatlash stansiyasi mavjud.</p>
+      <p>Maqsadimiz — O'zbekistonda elektr transportga o'tishni oson, tushunarli va foydali qilish: tanlovdan tortib kreditlash, ro'yxatdan o'tkazish va texnik xizmatgacha hammasini bir joyda hal qilamiz.</p>
+    </div>
+    <dl class="kpis kpis--big">
+      <div><dt>2000+</dt><dd>baxtli mijoz</dd></div>
+      <div><dt>8</dt><dd>model sotuvda</dd></div>
+      <div><dt>24/7</dt><dd>yo'lda yordam</dd></div>
+      <div><dt>150 kVt</dt><dd>tez quvvatlash</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="section section--dark">
+  <div class="container features">
+    <article class="feature"><div class="feature__icon">🏢</div><h3>Shourum</h3><p>Barcha modellarni jonli ko'rish va solishtirish imkoniyati.</p></article>
+    <article class="feature"><div class="feature__icon">🔧</div><h3>Servis</h3><p>Diagnostika, texnik xizmat va kafolatli ta'mirlash.</p></article>
+    <article class="feature"><div class="feature__icon">⚡</div><h3>Quvvatlash</h3><p>Mijozlar uchun DC tez quvvatlash stansiyasi.</p></article>
+    <article class="feature"><div class="feature__icon">💳</div><h3>Moliya</h3><p>Hamkor banklar bilan kredit va lizing dasturlari.</p></article>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container cta">
+    <h2>Yangi BYD ni sinab ko'rishga tayyormisiz?</h2>
+    <a href="{% url 'leads:test_drive' %}" class="btn btn--primary">Test-drayvga yozilish</a>
+  </div>
+</section>
+{% endblock %}

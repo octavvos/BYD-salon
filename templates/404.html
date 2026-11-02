@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Sahifa topilmadi — {{ salon.name }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container cta">
+    <p class="eyebrow">404</p>
+    <h1>Sahifa topilmadi</h1>
+    <p class="muted">Bu sahifa o'chirilgan yoki manzil noto'g'ri kiritilgan.</p>
+    <div class="hero__actions">
+      <a href="{% url 'home' %}" class="btn btn--primary">Bosh sahifa</a>
+      <a href="{% url 'cars:list' %}" class="btn btn--ghost">Modellar</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

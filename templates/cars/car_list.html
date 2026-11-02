@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Modellar — {{ salon.name }}{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <p class="eyebrow">Katalog</p>
+    <h1>BYD model qatori</h1>
+    <p class="muted">{{ paginator.count }} ta model topildi</p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container catalog">
+    <aside class="filters">
+      <form method="get" class="filters__form" data-autosubmit>
+        <div class="field">
+          <label for="q">Qidiruv</label>
+          <input type="search" id="q" name="q" value="{{ current.q }}" placeholder="Masalan, Seal">
+        </div>
+
+        <fieldset class="field">
+          <legend>Kuzov turi</legend>
+          <label class="radio"><input type="radio" name="body" value="" {% if not current.body %}checked{% endif %}> Barchasi</label>
+          {% for bt in body_types %}
+            <label class="radio"><input type="radio" name="body" value="{{ bt.slug }}" {% if current.body == bt.slug %}checked{% endif %}> {{ bt.name }}</label>
+          {% endfor %}
+        </fieldset>
+
+        <fieldset class="field">
+          <legend>Dvigatel</legend>
+          <label class="radio"><input type="radio" name="powertrain" value="" {% if not current.powertrain %}checked{% endif %}> Barchasi</label>
+          {% for value, label in powertrains %}
+            <label class="radio"><input type="radio" name="powertrain" value="{{ value }}" {% if current.powertrain == value %}checked{% endif %}> {{ label }}</label>
+          {% endfor %}
+        </fieldset>
+
+        <fieldset class="field">
+          <legend>Narx (USD)</legend>
+          <div class="form__row form__row--tight">
+            <input type="number" name="price_min" value="{{ current.price_min }}" placeholder="{{ price_bounds.lo|default:'dan' }}" min="0" step="500" aria-label="Minimal narx">
+            <input type="number" name="price_max" value="{{ current.price_max }}" placeholder="{{ price_bounds.hi|default:'gacha' }}" min="0" step="500" aria-label="Maksimal narx">
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <label for="sort">Saralash</label>
+          <select name="sort" id="sort">
+            <option value="">Tavsiya etilgan</option>
+            {% for value, label in sort_options %}
+              <option value="{{ value }}" {% if current.sort == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block">Qo'llash</button>
+        {% if has_filters %}<a href="{% url 'cars:list' %}" class="btn btn--ghost btn--block">Filtrlarni tozalash</a>{% endif %}
+      </form>
+    </aside>
+
+    <div>
+      <div class="grid grid--cards grid--catalog">
+        {% for car in cars %}
+          {% include "partials/car_card.html" %}
+        {% empty %}
+          <div class="empty">
+            <p>Tanlangan filtrlar bo'yicha model topilmadi.</p>
+            <a href="{% url 'cars:list' %}" class="btn btn--ghost">Barcha modellarni ko'rish</a>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+        <nav class="pagination" aria-label="Sahifalar">
+          {% if page_obj.has_previous %}<a href="{% querystring page=page_obj.previous_page_number %}">←</a>{% endif %}
+          {% for num in paginator.page_range %}
+            {% if num == page_obj.number %}<span class="is-active">{{ num }}</span>
+            {% else %}<a href="{% querystring page=num %}">{{ num }}</a>{% endif %}
+          {% endfor %}
+          {% if page_obj.has_next %}<a href="{% querystring page=page_obj.next_page_number %}">→</a>{% endif %}
+        </nav>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

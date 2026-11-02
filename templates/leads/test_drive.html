@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Test-drayvga yozilish — {{ salon.name }}{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <p class="eyebrow">Bepul xizmat</p>
+    <h1>Test-drayvga yozilish</h1>
+    <p class="muted">Modelni va qulay vaqtni tanlang. Menejerimiz tasdiqlash uchun qo'ng'iroq qiladi.</p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container split">
+    <div class="panel">
+      {% include "partials/test_drive_form.html" %}
+    </div>
+    <div>
+      <h3>Qanday o'tadi?</h3>
+      <ol class="steps">
+        <li><strong>Ariza</strong> — formani to'ldirasiz, 15 daqiqa ichida qo'ng'iroq qilamiz.</li>
+        <li><strong>Tanishuv</strong> — mutaxassis avtomobil imkoniyatlarini ko'rsatadi.</li>
+        <li><strong>Haydash</strong> — shahar va trassa bo'ylab ~30 daqiqalik marshrut.</li>
+        <li><strong>Taklif</strong> — kredit, trade-in va aksiyalar bo'yicha individual hisob.</li>
+      </ol>
+      <p class="muted">Savollar bo'lsa: <a href="tel:{{ salon.phone|cut:' ' }}">{{ salon.phone }}</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}

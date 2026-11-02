@@ -1,0 +1,89 @@
+{% load static %}<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ salon.name }} — rasmiy diler{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ salon.slogan }}{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <header class="header" data-header>
+    <div class="container header__inner">
+      <a href="{% url 'home' %}" class="logo" aria-label="{{ salon.name }}">
+        <span class="logo__mark">BYD</span><span class="logo__text">Salon</span>
+      </a>
+      <nav class="nav" data-nav>
+        {% url 'cars:list' as models_url %}{% url 'about' as about_url %}{% url 'leads:contacts' as contacts_url %}{% url 'leads:test_drive' as td_url %}
+        <a href="{{ models_url }}" class="nav__link {% if request.path|slice:':8' == models_url and not request.GET.powertrain %}is-active{% endif %}">Modellar</a>
+        <a href="{{ models_url }}?powertrain=ev" class="nav__link">Elektr</a>
+        <a href="{{ models_url }}?powertrain=dmi" class="nav__link">Gibrid</a>
+        <a href="{{ about_url }}" class="nav__link {% if request.path == about_url %}is-active{% endif %}">Biz haqimizda</a>
+        <a href="{{ contacts_url }}" class="nav__link {% if request.path == contacts_url %}is-active{% endif %}">Aloqa</a>
+        <a href="{{ td_url }}" class="btn btn--primary btn--sm nav__cta">Test-drayv</a>
+      </nav>
+      <a href="tel:{{ salon.phone|cut:' ' }}" class="header__phone">{{ salon.phone }}</a>
+      <button class="burger" type="button" aria-label="Menyu" aria-expanded="false" data-burger>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="toasts" data-toasts>
+      {% for message in messages %}
+        <div class="toast toast--{{ message.tags }}" role="status">
+          <span>{{ message }}</span>
+          <button type="button" class="toast__close" aria-label="Yopish" data-toast-close>&times;</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div>
+        <a href="{% url 'home' %}" class="logo logo--light"><span class="logo__mark">BYD</span><span class="logo__text">Salon</span></a>
+        <p class="footer__muted">{{ salon.slogan }}</p>
+        <div class="footer__social">
+          {% if salon.telegram %}<a href="{{ salon.telegram }}" target="_blank" rel="noopener">Telegram</a>{% endif %}
+          {% if salon.instagram %}<a href="{{ salon.instagram }}" target="_blank" rel="noopener">Instagram</a>{% endif %}
+        </div>
+      </div>
+      <div>
+        <h4>Modellar</h4>
+        <a href="{% url 'cars:list' %}?powertrain=ev">Elektromobillar</a>
+        <a href="{% url 'cars:list' %}?powertrain=dmi">Gibridlar (DM-i)</a>
+        <a href="{% url 'cars:list' %}">Barcha modellar</a>
+      </div>
+      <div>
+        <h4>Xizmatlar</h4>
+        <a href="{% url 'leads:test_drive' %}">Test-drayv</a>
+        <a href="{% url 'leads:contacts' %}?topic=credit">Kredit va bo'lib to'lash</a>
+        <a href="{% url 'leads:contacts' %}?topic=trade_in">Trade-in</a>
+        <a href="{% url 'leads:contacts' %}?topic=service">Servis</a>
+      </div>
+      <div>
+        <h4>Aloqa</h4>
+        <a href="tel:{{ salon.phone|cut:' ' }}">{{ salon.phone }}</a>
+        <a href="mailto:{{ salon.email }}">{{ salon.email }}</a>
+        <p class="footer__muted">{{ salon.address }}</p>
+        <p class="footer__muted">{{ salon.working_hours }}</p>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <span>&copy; {% now "Y" %} {{ salon.name }}. Barcha huquqlar himoyalangan.</span>
+      <span class="footer__muted">Narxlar va xususiyatlar ma'lumot uchun berilgan, ommaviy oferta emas.</span>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

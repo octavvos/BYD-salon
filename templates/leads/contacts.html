@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Aloqa — {{ salon.name }}{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <p class="eyebrow">Aloqa</p>
+    <h1>Biz bilan bog'laning</h1>
+    <p class="muted">Konsultatsiya, kredit, trade-in yoki servis — savolingizni qoldiring.</p>
+  </div>
+</section>
+
+<section class="section section--flush">
+  <div class="container split">
+    <div class="panel">
+      <form method="post" class="form" novalidate>
+        {% csrf_token %}
+        {{ form.website }}{{ form.car }}
+        {% for error in form.non_field_errors %}<p class="form__error">{{ error }}</p>{% endfor %}
+        {% include "partials/field.html" with field=form.topic %}
+        <div class="form__row">
+          {% include "partials/field.html" with field=form.full_name %}
+          {% include "partials/field.html" with field=form.phone %}
+        </div>
+        {% include "partials/field.html" with field=form.message %}
+        <button type="submit" class="btn btn--primary btn--block">Yuborish</button>
+      </form>
+    </div>
+
+    <div class="contact-info">
+      <div class="contact-info__item">
+        <span>Telefon</span>
+        <a href="tel:{{ salon.phone|cut:' ' }}">{{ salon.phone }}</a>
+        {% if salon.phone_secondary %}<a href="tel:{{ salon.phone_secondary|cut:' ' }}">{{ salon.phone_secondary }}</a>{% endif %}
+      </div>
+      <div class="contact-info__item"><span>Email</span><a href="mailto:{{ salon.email }}">{{ salon.email }}</a></div>
+      <div class="contact-info__item"><span>Manzil</span><p>{{ salon.address }}</p></div>
+      <div class="contact-info__item"><span>Ish vaqti</span><p>{{ salon.working_hours }}</p></div>
+      {% if salon.map_embed_url %}
+        <iframe class="map" src="{{ salon.map_embed_url }}" loading="lazy" title="Xarita" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      {% else %}
+        <div class="map map--placeholder">Xarita havolasini admin paneldagi «Salon ma'lumotlari» bo'limidan qo'shing.</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

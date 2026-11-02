@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load salon_tags %}
+
+{% block title %}{{ car.name }} — narxi va xususiyatlari | {{ salon.name }}{% endblock %}
+{% block meta_description %}{{ car.name }}: {{ car.tagline }}. Narxi ${{ car.price|spaced }} dan.{% endblock %}
+
+{% block content %}
+<section class="car-hero" style="--car: {{ car.accent_color }}">
+  <div class="container">
+    <nav class="breadcrumbs">
+      <a href="{% url 'home' %}">Bosh sahifa</a> / <a href="{% url 'cars:list' %}">Modellar</a> / <span>{{ car.name }}</span>
+    </nav>
+    <div class="car-hero__grid">
+      <div class="car-hero__media">
+        <div class="hero__glow"></div>
+        <div class="gallery" data-gallery>
+          <div class="gallery__main" data-gallery-main>
+            {% include "partials/car_visual.html" with car=car size="hero" %}
+          </div>
+          {% if car.images.all %}
+            <div class="gallery__thumbs">
+              {% if car.main_image %}
+                <button type="button" class="gallery__thumb is-active" data-gallery-src="{{ car.main_image.url }}"><img src="{{ car.main_image.url }}" alt=""></button>
+              {% endif %}
+              {% for img in car.images.all %}
+                <button type="button" class="gallery__thumb" data-gallery-src="{{ img.image.url }}"><img src="{{ img.image.url }}" alt="{{ img.caption }}" loading="lazy"></button>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        {% if car.colors.all %}
+          <div class="colors" data-colors>
+            <span class="colors__label">Rang: <strong data-color-name>{{ car.colors.all.0.name }}</strong></span>
+            <div class="colors__list">
+              {% for color in car.colors.all %}
+                <button type="button" class="swatch{% if forloop.first %} is-active{% endif %}" style="--swatch: {{ color.hex_code }}" data-color="{{ color.hex_code }}" data-name="{{ color.name }}" aria-label="{{ color.name }}"></button>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="car-hero__info">
+        <div class="badges">
+          <span class="badge badge--{{ car.powertrain }}">{{ car.get_powertrain_display }}</span>
+          <span class="badge">{{ car.body_type.name }}</span>
+          <span class="badge">{{ car.year }}</span>
+        </div>
+        <h1>{{ car.name }}</h1>
+        <p class="lead">{{ car.tagline }}</p>
+        <div class="price price--lg">
+          {% if car.old_price %}<s class="price__old">${{ car.old_price|spaced }}</s> <span class="badge badge--sale">−{{ car.discount_percent }}%</span>{% endif %}
+          <span class="price__value">${{ car.price|spaced }}</span>
+          <span class="price__uzs">≈ {{ car.price|to_uzs:salon.usd_rate|spaced }} so'm</span>
+        </div>
+        <dl class="kpis">
+          {% for label, value in car.key_specs %}
+            <div><dt>{{ value }}</dt><dd>{{ label }}</dd></div>
+          {% endfor %}
+        </dl>
+        <div class="hero__actions">
+          <a href="#test-drive" class="btn btn--primary">Test-drayvga yozilish</a>
+          <a href="#credit" class="btn btn--ghost">Kredit hisoblash</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container split split--wide">
+    <div>
+      {% if car.description %}
+        <h2>Model haqida</h2>
+        <p class="prose">{{ car.description|linebreaksbr }}</p>
+      {% endif %}
+      <h2>Texnik xususiyatlar</h2>
+      <div class="specs">
+        {% for title, rows in car.spec_groups %}
+          {% if rows %}
+            <div class="specs__group">
+              <h3>{{ title }}</h3>
+              <dl>
+                {% for label, value in rows %}<div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>{% endfor %}
+              </dl>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="sticky-stack">
+      <div class="panel" id="credit" data-credit
+           data-price="{{ car.price }}" data-rate="{{ salon.credit_rate|stringformat:'s' }}" data-usd="{{ salon.usd_rate }}">
+        <h3>Kredit kalkulyatori</h3>
+        <div class="field">
+          <label for="credit-down">Boshlang'ich to'lov: <strong data-credit-down-label>30%</strong></label>
+          <input type="range" id="credit-down" min="0" max="90" step="5" value="30" data-credit-down>
+        </div>
+        <div class="field">
+          <label for="credit-term">Muddat</label>
+          <div class="segmented" role="radiogroup" id="credit-term">
+            <label><input type="radio" name="credit-term" value="12"><span>12</span></label>
+            <label><input type="radio" name="credit-term" value="24"><span>24</span></label>
+            <label><input type="radio" name="credit-term" value="36" checked><span>36</span></label>
+            <label><input type="radio" name="credit-term" value="48"><span>48</span></label>
+            <label><input type="radio" name="credit-term" value="60"><span>60</span></label>
+          </div>
+        </div>
+        <dl class="credit__result">
+          <div><dt>Oylik to'lov</dt><dd data-credit-monthly>—</dd></div>
+          <div><dt>Kredit summasi</dt><dd data-credit-loan>—</dd></div>
+          <div><dt>Yillik foiz</dt><dd>{{ salon.credit_rate|floatformat:"-2" }}%</dd></div>
+        </dl>
+        <p class="form__hint">Hisob taxminiy (annuitet). Aniq shartlar bank tomonidan belgilanadi.</p>
+
+        <form method="post" action="{% url 'leads:contacts' %}" class="form form--compact" novalidate data-credit-form>
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <input type="hidden" name="topic" value="credit">
+          {{ credit_form.car }}{{ credit_form.website }}
+          <textarea name="message" hidden data-credit-message></textarea>
+          <div class="form__row">
+            {% include "partials/field.html" with field=credit_form.full_name %}
+            {% include "partials/field.html" with field=credit_form.phone %}
+          </div>
+          <button type="submit" class="btn btn--dark btn--block">Kredit arizasini yuborish</button>
+        </form>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="section section--muted" id="test-drive">
+  <div class="container split">
+    <div>
+      <p class="eyebrow">Test-drayv</p>
+      <h2>{{ car.name }} ni o'zingiz sinab ko'ring</h2>
+      <p class="muted">Test-drayv bepul va taxminan 30 daqiqa davom etadi. Haydovchilik guvohnomangizni olishni unutmang.</p>
+    </div>
+    <div class="panel">
+      {% include "partials/test_drive_form.html" with form=test_drive_form next=request.path hide_car=True %}
+    </div>
+  </div>
+</section>
+
+{% if similar %}
+<section class="section">
+  <div class="container">
+    <div class="section__head"><h2>O'xshash modellar</h2></div>
+    <div class="grid grid--cards">
+      {% for car in similar %}{% include "partials/car_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

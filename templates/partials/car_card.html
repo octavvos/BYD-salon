@@ -1,0 +1,28 @@
+{% load salon_tags %}
+<article class="car-card">
+  <a href="{{ car.get_absolute_url }}" class="car-card__media" style="--car: {{ car.accent_color }}">
+    <span class="badge badge--{{ car.powertrain }}">{{ car.get_powertrain_display }}</span>
+    {% if car.discount_percent %}<span class="badge badge--sale">−{{ car.discount_percent }}%</span>{% endif %}
+    {% include "partials/car_visual.html" with car=car size="card" %}
+  </a>
+  <div class="car-card__body">
+    <div class="car-card__head">
+      <h3 class="car-card__title"><a href="{{ car.get_absolute_url }}">{{ car.name }}</a></h3>
+      <span class="car-card__type">{{ car.body_type.name }}</span>
+    </div>
+    <p class="car-card__tagline">{{ car.tagline }}</p>
+    <dl class="car-card__specs">
+      {% for label, value in car.key_specs|slice:":3" %}
+        <div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>
+      {% endfor %}
+    </dl>
+    <div class="car-card__foot">
+      <div class="price">
+        {% if car.old_price %}<s class="price__old">${{ car.old_price|spaced }}</s>{% endif %}
+        <span class="price__value">${{ car.price|spaced }}</span>
+        <span class="price__uzs">≈ {{ car.price|to_uzs:salon.usd_rate|spaced }} so'm</span>
+      </div>
+      <a href="{{ car.get_absolute_url }}" class="btn btn--ghost btn--sm">Batafsil</a>
+    </div>
+  </div>
+</article>
